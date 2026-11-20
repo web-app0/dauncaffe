@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>DAUN CAFFE - Kasir & Manajemen POS</title>
+  <meta name="description" content="Aplikasi Web Kasir & Manajemen DAUN CAFFE - Ngopi • Berkarya • Bertumbuh">
+  
+  <!-- Favicon & PWA App Icons -->
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="apple-touch-icon" href="logo.jpg">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Mobile Browser Theme Color -->
+  <meta name="theme-color" content="#1E382B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DAUN CAFFE">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background-color: #F8F5F0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Container Iframe Fullscreen */
+    #app-frame {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      border: none;
+      outline: none;
+      z-index: 10;
+      background-color: #F8F5F0;
+    }
+
+    /* Branded Splash Screen / Loading Screen */
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      background: radial-gradient(circle at center, #FDFBF7 0%, #F4EFE6 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+    }
+
+    #splash-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-card {
+      text-align: center;
+      padding: 30px;
+      max-width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-img {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 10px 25px rgba(30, 56, 43, 0.15);
+      border: 3px solid #C2A676;
+      animation: pulseLogo 2.5s infinite ease-in-out;
+    }
+
+    .brand-title {
+      font-family: Georgia, "Playfair Display", serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #1E382B;
+      margin-bottom: 6px;
+    }
+
+    .brand-tagline {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      color: #8C6D46;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    /* Elegant Spinner */
+    .spinner-ring {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(30, 56, 43, 0.12);
+      border-top-color: #1E382B;
+      border-radius: 50%;
+      animation: spin 0.9s infinite linear;
+      margin-bottom: 14px;
+    }
+
+    .loading-text {
+      font-size: 13px;
+      font-weight: 500;
+      color: #556B2F;
+      letter-spacing: 0.5px;
+    }
+
+    /* Fallback Bar jika koneksi lambat */
+    .fallback-container {
+      margin-top: 24px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.4s ease;
+      display: flex;
+      gap: 10px;
+    }
+
+    .fallback-container.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .btn-fallback {
+      background-color: #1E382B;
+      color: #FFFFFF;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(30, 56, 43, 0.2);
+    }
+
+    .btn-reload {
+      background-color: #EDE8DE;
+      color: #1E382B;
+      border: 1px solid #D6CEBE;
+      padding: 9px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Web App Iframe -->
+  <iframe
+    id="app-frame"
+    src="https://script.google.com/macros/s/AKfycbx02aMkEgVN4YzxkfFpWey5FtGvAW4gLipO-K4z7T-BS1C8uUoNdUVWU9ZbEExkCP8cdQ/exec"
+    allow="camera; microphone; geolocation; clipboard-read; clipboard-write; web-share"
+    sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads"
+    title="DAUN CAFFE Web Application">
+  </iframe>
+
+  <!-- Branded Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-card">
+      <div class="logo-wrapper">
+        <img src="logo.jpg" alt="Logo DAUN CAFFE" class="logo-img" onerror="this.style.display='none'">
+      </div>
+      <h1 class="brand-title">DAUN CAFFE</h1>
+      <p class="brand-tagline">NGOPI • BERKARYA • BERTUMBUH</p>
+      
+      <div class="spinner-ring"></div>
+      <p class="loading-text" id="loading-status">Menghubungkan ke sistem kasir...</p>
+
+      <!-- Tombol bantuan jika loading lama (muncul setelah 6 detik) -->
+      <div class="fallback-container" id="fallback-tools">
+        <button class="btn-reload" onclick="reloadApp()">Muat Ulang</button>
+        <a class="btn-fallback" id="direct-link" href="https://script.google.com/macros/s/AKfycbx02aMkEgVN4YzxkfFpWey5FtGvAW4gLipO-K4z7T-BS1C8uUoNdUVWU9ZbEExkCP8cdQ/exec" target="_blank" rel="noopener">Buka Langsung</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const iframe = document.getElementById('app-frame');
+    const splash = document.getElementById('splash-screen');
+    const statusText = document.getElementById('loading-status');
+    const fallbackTools = document.getElementById('fallback-tools');
+
+    let isLoaded = false;
+
+    // Saat iframe selesai dimuat oleh browser
+    iframe.onload = function() {
+      isLoaded = true;
+      statusText.textContent = "Aplikasi Siap!";
+      setTimeout(() => {
+        splash.classList.add('hidden');
+      }, 350);
+    };
+
+    // Safety timeout: jika dalam 4.5 detik belum tertutup (misal cache/gas render)
+    setTimeout(() => {
+      if (!isLoaded) {
+        statusText.textContent = "Sedang menyiapkan database & menu...";
+      }
+    }, 2500);
+
+    // Timeout untuk memunculkan tombol fallback jika internet lambat
+    setTimeout(() => {
+      if (!isLoaded) {
+        statusText.textContent = "Membutuhkan waktu sedikit lebih lama...";
+        fallbackTools.classList.add('show');
+      }
+    }, 6000);
+
+    // Otomatis hilangkan splash maksimal pada detik ke-9 agar tidak macet
+    setTimeout(() => {
+      if (!splash.classList.contains('hidden')) {
+        splash.classList.add('hidden');
+      }
+    }, 9000);
+
+    function reloadApp() {
+      fallbackTools.classList.remove('show');
+      statusText.textContent = "Memuat ulang...";
+      iframe.src = iframe.src;
+    }
+  </script>
+</body>
+</html>
